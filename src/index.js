@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import rotateBoard from './computer.js';
+
 
 function Square(props) {
   return (
@@ -83,7 +85,7 @@ class Game extends React.Component {
     const moves = history.map((step, move) => {
       const desc = move ? 
       'Go to move #' + move :
-      'Go to game start';
+      'Start new game';
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
@@ -141,3 +143,4 @@ function calculateWinner(squares) {
   }
   return null;
 }
+console.log(rotateBoard([[1, 2, 3],[4, 5, 6], [7, 8, 9]]));

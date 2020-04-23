@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import rotateBoard from './computer.js';
+import computerMove from './computer.js';
 
 
 function Square(props) {
@@ -50,24 +50,45 @@ class Game extends React.Component {
       }],
       stepNumber: 0,
       player1IsNext: true,
+      computerPlaying: false,
     };
   }
 
-  handleClick(i) {
+  handleClick(i, computerSym = 'O', compTurn=false) {
+    console.log('i: ' + i.toString());
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
-    squares[i] = this.state.player1IsNext ? 'X' : 'O';
-    this.setState({
+
+    if (this.state.stepNumber % 2 === 0) {
+      squares[i] = 'X';
+    } else {
+      squares[i] = 'O';
+    }
+    console.log('handleClick squares:' + squares);
+    console.log('before player1IsNext: ' + this.state.player1IsNext);
+    this.setState(prevState => ({
       history: history.concat([{
         squares: squares,
       }]), 
       stepNumber: history.length,
       player1IsNext: !this.state.player1IsNext,
-    });
+      computerPlaying: prevState.computerPlaying,
+    }));
+    console.log('player1IsNext: ' + this.state.player1IsNext);
+    console.log('handleClick history:' + history.length + this.state.history[0]);
+    console.log(this.state.history);
+    compTurn = !compTurn;
+
+    if (this.state.computerPlaying && compTurn) { // Not updating for some reason
+      console.log('in if statement');
+      let theMove = computerMove(squares, computerSym);
+      console.log(theMove);
+      this.handleClick(theMove-1, computerSym, true);
+    }
   }
 
   jumpTo(step) {
@@ -75,6 +96,20 @@ class Game extends React.Component {
       stepNumber: step, 
       player1IsNext: (step % 2) === 0,
     });
+  }
+
+  turnOnComputer(sym) {
+    this.setState({
+      computerPlaying: true,
+    });
+
+    console.log('is the computer playing?');
+    console.log(this.state.computerPlaying);
+    console.log(sym);
+    if (sym === 'X') {
+      let i = computerMove(this.history[this.history.length - 1].squares, sym);
+      this.handleClick(i, sym);
+    } 
   }
 
   render() {
@@ -90,7 +125,7 @@ class Game extends React.Component {
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
         </li>
-        );
+      );
     });
 
     let status;
@@ -107,6 +142,11 @@ class Game extends React.Component {
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
           />
+        </div>
+        <div>
+          <button onClick={() => this.jumpTo(0)}>Play against a friend</button><br/>
+          <button onClick={() => this.turnOnComputer('O')}>Play as X against the computer</button>
+          <button onClick={() => this.turnOnComputer('X')}>Play as O against computer</button>
         </div>
         <div className="game-info">
           <div>{status}</div>
@@ -143,4 +183,3 @@ function calculateWinner(squares) {
   }
   return null;
 }
-console.log(rotateBoard([[1, 2, 3],[4, 5, 6], [7, 8, 9]]));

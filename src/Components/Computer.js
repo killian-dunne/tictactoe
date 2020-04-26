@@ -1,12 +1,11 @@
 function computerMove(squares, sym) {
-  console.log('this is squares');
-  console.log(squares);
+  console.log(`Board in Computer is ${squares} with sym ${sym}`);
+
   let board = new Array(3);
   for (let t = 0; t < 3; t++) {
     board[t] = [squares[3 * t], squares[3 * t + 1], squares[3 * t + 2]];
   }
 
-  console.log('this is sym' + sym.toString());
   let otherSym = getOtherSym(sym);
 
   let numMoves = countMoves(board, sym);
@@ -51,7 +50,7 @@ function computerMove(squares, sym) {
 
   let compWin = findWin(board, sym);
   if (compWin > 0) { // Check if computer can win
-    return compWin; 
+    return compWin;
 
   } else {
     let stopWin = findWin(board, otherSym);
@@ -66,7 +65,7 @@ function computerMove(squares, sym) {
   let compFork = findForks(board, sym);
   if (compFork > 0) {
     return compFork;
-  } else {
+  } else { // Check if the person can get a fork
     let stopFork = findForks(board, otherSym, true);
     if (stopFork > 0) {
       return stopFork;
@@ -77,15 +76,15 @@ function computerMove(squares, sym) {
   let pair = play2inaRow(board, sym)
   if (pair > 0) {
     return pair
-  } 
+  }
 
   // Play the centre square if it's free
   if (board[1][1] === null) {
     return 5;
-  } 
+  }
 
   // If a corner is occupied play the opposite corner
-  let playOpposite = checkOpposite(board, sym); 
+  let playOpposite = checkOpposite(board, sym);
   if (playOpposite > 0) {
     return playOpposite;
   }
@@ -95,9 +94,6 @@ function computerMove(squares, sym) {
   if (freeCorner > 0) {
     return freeCorner;
   }
-
-
-
 }
 
 let playEdge = (board, sym) => {
@@ -113,7 +109,7 @@ let playEdge = (board, sym) => {
 }
 
 let checkOpposite = (board, sym) => {
-  let otherSym = getOtherSym(sym);  
+  let otherSym = getOtherSym(sym);
   if        (board[2][2] === otherSym && board [0][0] === null) {
     return 1;
   } else if (board[2][0] === otherSym && board [0][2] === null) {
@@ -140,12 +136,12 @@ let playaCorner = (board, sym) => {
 }
 
 let findForks = (board, sym, multiple = false) => {
-
+  console.log(`findForks: ${board}|${sym}|${multiple}`);
   // Check can we execute a fork
   let checkingBoard = board;
   let otherSym = getOtherSym(sym);
 
-  let forksFound; 
+  let forksFound = [];
 
   // Check can a fork be played by checking do any of the available squares
   // create a fork if filled
@@ -155,7 +151,7 @@ let findForks = (board, sym, multiple = false) => {
     for (let j = 0; j < board[0].length; j++) {
       if (checkingBoard[i][j] === null) {
         if (!multiple) {
-          checkingBoard[i][j] = sym; 
+          checkingBoard[i][j] = sym;
           if (checkFork(checkingBoard, sym)) {
             return board.length * i + j + 1;
           }
@@ -178,7 +174,7 @@ let findForks = (board, sym, multiple = false) => {
                                      // preventing all the forks
       return maximalForks[0];
     } else {
-      for (let sq of maximalForks) { // Check if any of the forks 
+      for (let sq of maximalForks) { // Check if any of the forks
                                      // start your own attack
         if (checkCreate2inaRow(board, sym, sq)) {
           return sq;
@@ -186,7 +182,7 @@ let findForks = (board, sym, multiple = false) => {
       }
       return maximalForks[0];
     }
-  } 
+  }
   console.log('no forks have been found');
   return -1;
 }
@@ -213,7 +209,7 @@ let checkCreate2inaRow = (board, sym, sq) => {
   if (board[i][j] !== null) {
     console.log('Error: Square is not empty!');
     return false;
-  } 
+  }
   let checkingBoard = board;
   for (let k = 0; k < board.length; k++) {
     checkingBoard[k] = board[k];
@@ -249,7 +245,7 @@ let checkFork = (board, sym) => {
   let j3 = [1, 1, 1, 1, 2, 0, 1, 1];
   let j4 = [1, 1, 0, 2, 1, 2, 1, 2];
   let j5 = [0, 2, 2, 2, 2, 0, 0, 2];
-  
+
   let boards = applySymmetries(board);
   let position;
   for (position of boards) {
@@ -320,7 +316,7 @@ function findWin(board, sym) {
     }
   });
   return winSquare;
-  
+
 } // return the square in {1,...,9} to win else return -1
 
 function applySymmetries(board) {
@@ -331,7 +327,7 @@ function applySymmetries(board) {
 			board = rotateBoard(board);
 		}
     board = reflectBoard(board);
-	}	
+	}
   return boards;
 }
 
@@ -350,7 +346,7 @@ function undoSymmetry(idx, win) {
   for (let i = 0; i < numRotations; i++) {
     board = rotateBoard(board);
   }
-  if (idx > 3) { 
+  if (idx > 3) {
     board = reflectBoard(board);
   }
 
@@ -379,7 +375,7 @@ function hasLine(board, sym) {
     return 5; // 6th
   }
   return -1;
-} 
+}
 
 function rotateBoard(board) {
 	let rBoard = new Array(board.length);
@@ -408,7 +404,7 @@ let getOtherSym = (sym) => {
     return 'O';
   } else if (sym === 'O') {
     return 'X';
-  } 
+  }
   console.log('Error: Symbol not X or O');
   return null;
 }
@@ -419,4 +415,3 @@ let getOtherSym = (sym) => {
 	['X', null, 'O'],
 	[null, null, 'O']]
 */
-

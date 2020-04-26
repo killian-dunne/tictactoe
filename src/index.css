@@ -17,6 +17,14 @@ ol, ul {
   margin-bottom: 10px;
 }
 
+#game-setup {
+
+}
+
+.hide {
+  display: none;
+}
+
 .square {
   background: #fff;
   border: 1px solid #999;

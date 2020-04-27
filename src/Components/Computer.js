@@ -8,10 +8,12 @@ function computerMove(squares, sym) {
 
   let otherSym = getOtherSym(sym);
 
-  let numMoves = countMoves(board, sym);
+  let numMoves = countMoves(board, sym); // The number of moves already played
   if (numMoves === -1) {
     alert('There is a board error.');
     return -1;
+  } else if (numMoves >= 9) {
+    alert('Board error: the game should have ended!');
   }
 
   // Opening moves, assume 'X' always starts
@@ -47,7 +49,6 @@ function computerMove(squares, sym) {
   // If a win exists
 
   // Execute win
-
   let compWin = findWin(board, sym);
   if (compWin > 0) { // Check if computer can win
     return compWin;
@@ -66,7 +67,7 @@ function computerMove(squares, sym) {
   if (compFork > 0) {
     return compFork;
   } else { // Check if the person can get a fork
-    let stopFork = findForks(board, otherSym, true);
+    let stopFork = findForks(board, sym, true);
     if (stopFork > 0) {
       return stopFork;
     }
@@ -136,59 +137,55 @@ let playaCorner = (board, sym) => {
 }
 
 let findForks = (board, sym, multiple = false) => {
-  console.log(`findForks: ${board}|${sym}|${multiple}`);
   // Check can we execute a fork
-  let checkingBoard = board;
+  const clone = (thing) => thing.map(item => Array.isArray(item) ? clone(item) : item);
+  let copyBoard = clone(board);
   let otherSym = getOtherSym(sym);
-
   let forksFound = [];
 
   // Check can a fork be played by checking do any of the available squares
   // create a fork if filled
 
   for (let i = 0; i < board.length; i++) {
-    checkingBoard[i] = board[i];
     for (let j = 0; j < board[0].length; j++) {
-      if (checkingBoard[i][j] === null) {
+      if (copyBoard[i][j] === null) {
         if (!multiple) {
-          checkingBoard[i][j] = sym;
-          if (checkFork(checkingBoard, sym)) {
+          copyBoard[i][j] = sym;
+          if (checkFork(copyBoard, sym)) {
             return board.length * i + j + 1;
           }
-          checkingBoard[i][j] = null;
+          copyBoard[i][j] = null;
         } else {
-          checkingBoard[i][j] = otherSym;
-          if (checkFork(checkingBoard, otherSym)) {
+          copyBoard[i][j] = otherSym;
+          if (checkFork(copyBoard, otherSym)) {
             forksFound.push(board.length * i + j + 1);
           }
+          copyBoard[i][j] = null;
         }
       }
     }
   }
 
-  if (forksFound.length === 1) { // Prevent the unique fork
-    return forksFound[0];
-  } else if (forksFound.length > 1) {
-    let maximalForks = findMost(forksFound);
-    if (maximalForks.length === 1) { // Choose the unique square
-                                     // preventing all the forks
-      return maximalForks[0];
-    } else {
-      for (let sq of maximalForks) { // Check if any of the forks
-                                     // start your own attack
-        if (checkCreate2inaRow(board, sym, sq)) {
-          return sq;
-        }
+  let maximalForks = findMost(forksFound);
+  if (maximalForks.length === 1) { // Prevent the unique square...
+  // that prevents the most forks
+    return maximalForks[0];
+  } else if (maximalForks.length > 1) {
+    for (let sq of maximalForks) { // Check if any of the forks
+                                   // start your own attack
+      if (checkCreate2inaRow(board, sym, sq)) {
+        return sq;
       }
-      return maximalForks[0];
     }
+    return maximalForks[0];
   }
-  console.log('no forks have been found');
+  console.log('Found no forks');
   return -1;
 }
 
 let play2inaRow = (board, sym) => {
   let otherSym = getOtherSym(sym);
+  console.log(`Board play2 ${board}`);
 
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[0].length; j++) {
@@ -200,22 +197,22 @@ let play2inaRow = (board, sym) => {
     }
   }
   console.log('No two-in-a-rows available');
+  return -1;
 }
 
 
 let checkCreate2inaRow = (board, sym, sq) => {
-  let i = (sq - 1) / board.length;
+  let i = Math.floor((sq - 1) / board.length);
   let j = (sq - 1) % board.length;
+
   if (board[i][j] !== null) {
     console.log('Error: Square is not empty!');
     return false;
   }
-  let checkingBoard = board;
-  for (let k = 0; k < board.length; k++) {
-    checkingBoard[k] = board[k];
-  }
-  checkingBoard[i][j] = sym;
-  if (findWin(checkingBoard, sym) > 0) {
+  const clone = (thing) => thing.map(item => Array.isArray(item) ? clone(item) : item);
+  let copyBoard = clone(board);
+  copyBoard[i][j] = sym;
+  if (findWin(copyBoard, sym) > 0) {
     return true;
   }
   return false;
@@ -235,16 +232,16 @@ let firstAvailableSquare = (board) => {
 }
 
 let checkFork = (board, sym) => {
-  let i1 = [0, 0, 0, 0, 0, 0, 1, 0];
-  let i2 = [0, 0, 0, 0, 0, 0, 1, 1];
-  let i3 = [1, 1, 1, 1, 2, 1, 2, 1];
-  let i4 = [0, 0, 2, 0, 1, 0, 0, 1];
-  let i5 = [2, 2, 2, 2, 1, 2, 1, 2];
-  let j1 = [0, 0, 0, 0, 0, 0, 1, 0];
-  let j2 = [2, 2, 2, 1, 2, 1, 2, 0];
-  let j3 = [1, 1, 1, 1, 2, 0, 1, 1];
-  let j4 = [1, 1, 0, 2, 1, 2, 1, 2];
-  let j5 = [0, 2, 2, 2, 2, 0, 0, 2];
+  let i1 = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+  let i2 = [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1];
+  let i3 = [1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 2];
+  let i4 = [0, 0, 2, 0, 1, 0, 0, 1, 0, 0, 0, 0];
+  let i5 = [2, 2, 2, 2, 1, 2, 1, 2, 1, 2, 1, 1];
+  let j1 = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0];
+  let j2 = [2, 2, 2, 1, 2, 1, 2, 0, 1, 2, 2, 1];
+  let j3 = [1, 1, 1, 1, 2, 0, 1, 1, 2, 0, 0, 2];
+  let j4 = [1, 1, 0, 2, 1, 2, 1, 2, 2, 1, 1, 0];
+  let j5 = [0, 2, 2, 2, 2, 0, 0, 2, 1, 0, 0, 2];
 
   let boards = applySymmetries(board);
   let position;
@@ -261,8 +258,6 @@ let checkFork = (board, sym) => {
   }
   return false;
 }
-
-export default computerMove;
 
 let findMost = (arr) => { // A function that returns the square
                           // with executing the most forks
@@ -415,3 +410,5 @@ let getOtherSym = (sym) => {
 	['X', null, 'O'],
 	[null, null, 'O']]
 */
+
+export default computerMove;

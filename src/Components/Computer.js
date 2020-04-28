@@ -31,7 +31,7 @@ function computerMove(squares, sym) {
     for (let i = 0; i < board.length; i++) {
       for (let j = 0; j < board[0].length; j++) {
         if (board[i][j] === 'O') {
-          oIs = i*board.length + j + 1;
+          oIs = i * board.length + j + 1;
         }
       }
       if (oIs === 2 || oIs === 3) {
@@ -95,6 +95,16 @@ function computerMove(squares, sym) {
   if (freeCorner > 0) {
     return freeCorner;
   }
+
+  // Play any remaining squares
+  for (let k = 0; k < board.length; k++) {
+    for (let l = 0; l < board.length; l++) {
+      if (board[k][l] === null) {
+        return k * board.length + l + 1;
+      }
+    }
+  }
+  return -1;
 }
 
 let playEdge = (board, sym) => {
@@ -151,15 +161,18 @@ let findForks = (board, sym, multiple = false) => {
       if (copyBoard[i][j] === null) {
         if (!multiple) {
           copyBoard[i][j] = sym;
-          if (checkFork(copyBoard, sym)) {
+          if (checkFork(copyBoard, sym).length > 0) {
             return board.length * i + j + 1;
           }
           copyBoard[i][j] = null;
         } else {
           copyBoard[i][j] = otherSym;
-          if (checkFork(copyBoard, otherSym)) {
+          let emptySquareForks = checkFork(copyBoard, otherSym, true);
+          if (emptySquareForks.length > 0) {
+            forksFound = forksFound.concat(emptySquareForks);
             forksFound.push(board.length * i + j + 1);
           }
+          emptySquareForks = [];
           copyBoard[i][j] = null;
         }
       }
@@ -206,7 +219,6 @@ let checkCreate2inaRow = (board, sym, sq) => {
   let j = (sq - 1) % board.length;
 
   if (board[i][j] !== null) {
-    console.log('Error: Square is not empty!');
     return false;
   }
   const clone = (thing) => thing.map(item => Array.isArray(item) ? clone(item) : item);
@@ -231,7 +243,7 @@ let firstAvailableSquare = (board) => {
   return -1;
 }
 
-let checkFork = (board, sym) => {
+let checkFork = (board, sym, multiple=false) => {
   let i1 = [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
   let i2 = [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1];
   let i3 = [1, 1, 1, 1, 2, 1, 2, 1, 2, 1, 2, 2];
@@ -243,6 +255,8 @@ let checkFork = (board, sym) => {
   let j4 = [1, 1, 0, 2, 1, 2, 1, 2, 2, 1, 1, 0];
   let j5 = [0, 2, 2, 2, 2, 0, 0, 2, 1, 0, 0, 2];
 
+  let forks = [];
+
   let boards = applySymmetries(board);
   let position;
   for (position of boards) {
@@ -252,11 +266,17 @@ let checkFork = (board, sym) => {
           position[i3[i]][j3[i]] === sym &&
           position[i4[i]][j4[i]] === null &&
           position[i5[i]][j5[i]] === null) {
-        return true;
+          if (multiple) {
+            let emptySquare1 = board.length * i4[i] + j4[i] + 1;
+            let emptySquare2 = board.length * i5[i] + j5[i] + 1;
+            forks = forks.concat([emptySquare1, emptySquare2]);
+          } else {
+            forks.push(true);
+          }
       }
     }
   }
-  return false;
+  return forks;
 }
 
 let findMost = (arr) => { // A function that returns the square

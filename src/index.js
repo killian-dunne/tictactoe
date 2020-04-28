@@ -28,7 +28,6 @@ class Game extends React.Component {
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
-
     if (this.state.stepNumber % 2 === 0) {
       squares[i] = 'X';
     } else {
@@ -48,7 +47,10 @@ class Game extends React.Component {
     this.setState({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
-      computerSym: computerSym
+      computerSym: computerSym,
+      history: [{
+        squares: Array(9).fill(null)
+      }]
     });
   }
 
@@ -67,7 +69,6 @@ class Game extends React.Component {
     let sym = this.state.computerSym;
     if ((sym === 'X' && this.state.xIsNext)
       || (sym === 'O' && !this.state.xIsNext)){
-        console.log('The stepNumber here is ' + this.state.stepNumber);
         let i = computerMove(this.state.history[this.state.history.length - 1].squares, sym);
         this.handleClick(i-1, sym);
         return true;
@@ -95,12 +96,12 @@ class Game extends React.Component {
           <button onClick={() => this.jumpTo(move, this.state.computerSym)}>{desc}</button>
         </li>
       );
-    }); // Need to check computerSym
+    });
 
     let status;
-    if (winner) {
+    if (winner === 'X' || winner === 'O') {
       status = 'Winner: ' + winner;
-    } else if (this.state.stepNumber === 9) {
+    } else if (winner === 'draw') {
       status = 'Draw Game!';
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');

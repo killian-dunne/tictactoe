@@ -15,5 +15,10 @@ export default function calculateWinner(squares) {
       return squares[a];
     }
   }
-  return null;
+  for (let box of squares) {
+    if (box === null) {
+      return null;
+    }
+  }
+  return "draw";
 }

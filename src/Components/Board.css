@@ -1,0 +1,10 @@
+.board-row:after {
+  clear: both;
+  content: "";
+  display: table;
+  background-color: red;
+}
+
+.board-div{
+  background-color: green;
+}

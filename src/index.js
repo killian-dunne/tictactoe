@@ -4,6 +4,8 @@ import './index.css';
 import computerMove from './Components/Computer.js';
 import Board from './Components/Board';
 import calculateWinner from './util/calculateWinner';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLaptopCode, faUser } from '@fortawesome/free-solid-svg-icons';
 
 // 'X' always starts
 
@@ -17,7 +19,8 @@ class Game extends React.Component {
       stepNumber: 0,
       xIsNext: true,
       computerSym: false, // false means the computer is not playing
-      showSetup: ""
+      showSetup: "",
+      iconSize: window.innerWidth < 650 ? "lg" : "5x"
     };
   }
 
@@ -82,6 +85,16 @@ class Game extends React.Component {
     }
   }
 
+  componentDidMount() {
+    window.addEventListener('resize', this.handleIconSize);
+  }
+
+  handleIconSize = () => {
+    this.setState({
+      iconSize: window.innerWidth < 650 ? "lg" : "5x"
+    });
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -109,10 +122,26 @@ class Game extends React.Component {
 
     return (
       <div className="game">
-        <div id="game-setup" className={this.state.showSetup} onClick={this.toggleSetup}>
-          <button onClick={() => this.jumpTo(0, false)}>Play against a friend</button><br/>
-          <button onClick={() => this.handleComputerSetup('O')}>Play as X against the computer</button>
-          <button onClick={() => this.handleComputerSetup('X')}>Play as O against the computer</button>
+        <div className={`modal ${this.state.showSetup}`} onClick={this.toggleSetup}>
+          <div className="game-setup">
+            <span onClick={this.toggleSetup} className="topright-x">&times;</span>
+            <p className="hello-text"> Select game mode: </p><br/>
+            <div className="options">
+              <div className="game-option">
+                <i className="fas fa-user"></i>
+                <FontAwesomeIcon icon={faUser} size={this.state.iconSize} />
+                <button onClick={() => this.jumpTo(0, false)} className="setup-button">Against a friend</button>
+              </div>
+              <div className="game-option">
+                <FontAwesomeIcon icon={faLaptopCode} size={this.state.iconSize}  />
+                <button onClick={() => this.handleComputerSetup('O')} className="setup-button">X against the computer</button>
+              </div>
+              <div className="game-option">
+                <FontAwesomeIcon icon={faLaptopCode} size={this.state.iconSize} />
+                <button onClick={() => this.handleComputerSetup('X')} className="setup-button">O against the computer</button>
+              </div>
+            </div>
+          </div>
         </div>
         <div id="new-game">
           <button onClick={this.toggleSetup}>New game</button>

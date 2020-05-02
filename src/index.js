@@ -7,6 +7,7 @@ import calculateWinner from './util/calculateWinner';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLaptopCode, faUser } from '@fortawesome/free-solid-svg-icons';
 
+
 // 'X' always starts
 
 class Game extends React.Component {
@@ -47,14 +48,12 @@ class Game extends React.Component {
   }
 
   jumpTo = (step, computerSym) => {
-    this.setState({
+    this.setState((prevState, props) => ({
       stepNumber: step,
       xIsNext: (step % 2) === 0,
       computerSym: computerSym,
-      history: [{
-        squares: Array(9).fill(null)
-      }]
-    });
+      history: prevState.history.slice(0, step + 1),
+    }));
   }
 
   handleComputerSetup = (sym) => {
@@ -95,21 +94,23 @@ class Game extends React.Component {
     });
   }
 
+  undoMove = () => {
+    let sN = this.state.stepNumber;
+    if (sN === 1) {
+      this.jumpTo(0, this.state.computerSym);
+    } else if (sN <= 9){
+      if (this.state.computerSym) {
+        this.jumpTo(sN - 2, this.state.computerSym);
+      } else {
+        this.jumpTo(sN - 1, this.state.computerSym);
+      }
+    }
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
-
-    const moves = history.map((step, move) => {
-      const desc = move ?
-      'Go to move #' + move :
-      'Start new game';
-      return (
-        <li key={move}>
-          <button onClick={() => this.jumpTo(move, this.state.computerSym)}>{desc}</button>
-        </li>
-      );
-    });
 
     let status;
     if (winner === 'X' || winner === 'O') {
@@ -119,10 +120,14 @@ class Game extends React.Component {
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
-
+    let showUndo = "hide";
+    if (this.state.stepNumber > 0 && this.state.stepNumber <= 9) {
+      showUndo = "";
+    }
     return (
       <div className="game">
         <div className={`modal ${this.state.showSetup}`} onClick={this.toggleSetup}>
+
           <div className="game-setup">
             <span onClick={this.toggleSetup} className="topright-x">&times;</span>
             <p className="hello-text"> Select game mode: </p><br/>
@@ -143,19 +148,27 @@ class Game extends React.Component {
             </div>
           </div>
         </div>
-        <div id="new-game">
-          <button onClick={this.toggleSetup}>New game</button>
-        </div>
-        <div className="game-board">
-          <Board
-            squares={current.squares}
-            onClick={(i) => this.handleClick(i)}
-          />
-        </div>
 
-        <div className="game-info">
-          <div>{status}</div>
-          <ol>{moves}</ol>
+        <div className="title-section">
+          <h1 className="title">Tic Tac Toe!</h1>
+        </div>
+        <div className="game-section">
+          <div className="background-box">
+            <div className="game-board">
+              <Board
+                squares={current.squares}
+                onClick={(i) => this.handleClick(i)}
+              />
+            </div>
+
+            <div className="vl"></div>
+
+            <div className="game-info">
+              <div className="game-status">{status}</div>
+              <button className={`info-button ${showUndo}`} onClick={this.undoMove}>Undo</button>
+              <button onClick={this.toggleSetup} className="info-button">New game</button>
+            </div>
+          </div>
         </div>
       </div>
     );

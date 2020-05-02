@@ -1,10 +1,37 @@
 .board-row:after {
   clear: both;
   content: "";
-  display: table;
+  display: flex;
+  flex-direction: row;
   background-color: red;
 }
 
 .board-div{
-  background-color: green;
+  margin: auto;
+}
+
+.square {
+  height: 100px;
+  width: 100px;
+  cursor: pointer;
+  padding: 0px;
+}
+
+.horizontal-below {
+  border-bottom: solid gray 7px;
+  border-radius: 2px;
+}
+
+.vertical-right {
+  border-right: solid gray 7px;
+}
+
+.x-format {
+  max-height: 100px;
+
+}
+
+.o-format {
+  max-height: 90px;
+  padding-top: 5px;
 }

@@ -1,12 +1,12 @@
-body {
+html, body {
   font-family: 'Varela Round', sans-serif;
   margin: 0px;
+  height: 100%;
 }
 
 .modal {
   position: fixed;
   background: gray;
-  padding-top: 100px;
   width: 100%;
   height: 100%;
   z-index: 1;
@@ -21,8 +21,10 @@ body {
   border-radius: 10px;
   width: 50%;
   background-color: #fefefe;
-  position: relative;
-  justify-content: center;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .game-option {
@@ -42,8 +44,7 @@ body {
 }
 
 .setup-button {
-  margin: 10px;
-  margin-top: 20px;
+  margin: 20px;
   padding: 10px;
   border-radius: 5px;
 }
@@ -69,33 +70,9 @@ body {
   cursor: pointer;
 }
 
-@media only screen and (max-width: 650px) {
-  .game-setup {
-    height: 60%;
-  }
-
-  .options {
-    flex-direction: column;
-  }
-  .setup-button {
-    margin: 10px;
-  }
-
-  .game-option {
-    flex-direction: row;
-    justify-content: left;
-    flex-grow: 1;
-  }
-
-  .title {
-    font-size: 30px;
-  }
-}
-
 .game-status {
   font-size: 30px;
   margin-bottom: 20px;
-  margin-top: 30px;
 }
 
 .square {
@@ -131,26 +108,29 @@ body {
 .game {
   display: flex;
   flex-direction: column;
+  background-color: #99ccff;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
 }
 
 .game-info {
-  margin-top: 5%;
-  margin-left: 10%;
   display: flex;
   flex-direction: column;
+  margin-left: 10%;
 }
 
 .game-board {
-  margin: auto;
-  margin-top: 5%;
-  margin-bottom: 5%;
-  margin-left: 20%;
   margin-right: 10%;
 }
 
 .vl {
   border-left: 2px solid gray;
   border-radius: 2px;
+  height: 80%;
+  align-self: center;
 }
 
 .title {
@@ -159,10 +139,76 @@ body {
 }
 
 .game-section {
-
+  height: 100%;
 }
 
 .background-box {
   display: flex;
   flex-direction: row;
+  background-color: white;
+  border-radius: 30px;
+  margin: 5%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  justify-content: center;
+  align-items: center;
+  height: 80%
+}
+
+@media only screen and (max-width: 750px) {
+  .title {
+    font-size: 40px;
+  }
+
+  .background-box {
+    flex-direction: column;
+  }
+
+  .vl {
+    display: none;
+  }
+
+  .game-board {
+    margin: 0px;
+    order: 2;
+  }
+
+  .game-info {
+    margin: 0px;
+    margin-bottom: 20px;
+    order: 1;
+  }
+
+  .square {
+    height: 80px;
+    width: 80px;
+  }
+
+  .x-format {
+    height: 80px;
+    width: 80px;
+  }
+
+  .o-format {
+    height: 70px;
+  }
+
+  .options {
+    flex-direction: column;
+  }
+
+  .game-option {
+    flex-direction: row;
+    margin: 5px;
+  }
+
+  .setup-button {
+    margin: 0px;
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+
+  .pad-left {
+    margin-left: 18px;
+  }
 }

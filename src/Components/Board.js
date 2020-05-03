@@ -8,8 +8,6 @@ class Board extends React.Component {
     if (i % 3 === 0 || i % 3 === 1) {
       verticalRight = "vertical-right";
     }
-    console.log(i % 3);
-    console.log(verticalRight);
     return (<Square
       value={this.props.squares[i]}
       onClick={() => this.props.onClick(i)}

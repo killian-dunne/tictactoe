@@ -21,7 +21,7 @@ class Game extends React.Component {
       xIsNext: true,
       computerSym: false, // false means the computer is not playing
       showSetup: "",
-      iconSize: window.innerWidth < 650 ? "lg" : "5x"
+      iconSize: window.innerWidth < 750 ? "lg" : "5x"
     };
   }
 
@@ -62,9 +62,19 @@ class Game extends React.Component {
   }
 
   toggleSetup = (e) => {
-    this.setState({
-      showSetup: this.state.showSetup ? "" : "hide"
-    });
+    // Treatment of FontAwesomeIcon className error
+    let probablyIcon = false;
+    if (e.target.tagName==="path" || e.target.tagName==="svg") {
+      probablyIcon = true;
+    }
+    if (!(e.target.parentElement.parentElement.className.includes("game-option")
+      && probablyIcon)) { // Then is(?) icon.
+      if (e.target.className.includes("clickable")) {
+        this.setState({
+          showSetup: this.state.showSetup ? "" : "hide"
+        });
+      }
+    }
   }
 
   compTurn = () => { // Checks if it's the computers go and triggers the move if so
@@ -90,7 +100,7 @@ class Game extends React.Component {
 
   handleIconSize = () => {
     this.setState({
-      iconSize: window.innerWidth < 650 ? "lg" : "5x"
+      iconSize: window.innerWidth < 750 ? "lg" : "5x"
     });
   }
 
@@ -126,29 +136,6 @@ class Game extends React.Component {
     }
     return (
       <div className="game">
-        <div className={`modal ${this.state.showSetup}`} onClick={this.toggleSetup}>
-
-          <div className="game-setup">
-            <span onClick={this.toggleSetup} className="topright-x">&times;</span>
-            <p className="hello-text"> Select game mode: </p><br/>
-            <div className="options">
-              <div className="game-option">
-                <i className="fas fa-user"></i>
-                <FontAwesomeIcon icon={faUser} size={this.state.iconSize} />
-                <button onClick={() => this.jumpTo(0, false)} className="setup-button">Against a friend</button>
-              </div>
-              <div className="game-option">
-                <FontAwesomeIcon icon={faLaptopCode} size={this.state.iconSize}  />
-                <button onClick={() => this.handleComputerSetup('O')} className="setup-button">X against the computer</button>
-              </div>
-              <div className="game-option">
-                <FontAwesomeIcon icon={faLaptopCode} size={this.state.iconSize} />
-                <button onClick={() => this.handleComputerSetup('X')} className="setup-button">O against the computer</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div className="title-section">
           <h1 className="title">Tic Tac Toe!</h1>
         </div>
@@ -166,7 +153,29 @@ class Game extends React.Component {
             <div className="game-info">
               <div className="game-status">{status}</div>
               <button className={`info-button ${showUndo}`} onClick={this.undoMove}>Undo</button>
-              <button onClick={this.toggleSetup} className="info-button">New game</button>
+              <button onClick={this.toggleSetup} className="clickable info-button">New game</button>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal stuff */}
+        <div className={`modal clickable ${this.state.showSetup}`} onClick={this.toggleSetup}>
+          <div className="game-setup">
+            <span onClick={this.toggleSetup} className="topright-x clickable">&times;</span>
+            <p className="hello-text"> Select game mode: </p>
+            <div className="options">
+              <div className="game-option">
+                <FontAwesomeIcon icon={faUser} size={this.state.iconSize} />
+                <button onClick={() => this.jumpTo(0, false)} className="pad-left clickable setup-button">Against a friend</button>
+              </div>
+              <div className="game-option">
+                <FontAwesomeIcon icon={faLaptopCode} size={this.state.iconSize}  />
+                <button onClick={() => this.handleComputerSetup('O')} className="clickable setup-button">X against the computer</button>
+              </div>
+              <div className="game-option">
+                <FontAwesomeIcon icon={faLaptopCode} size={this.state.iconSize} />
+                <button onClick={() => this.handleComputerSetup('X')} className="clickable setup-button">O against the computer</button>
+              </div>
             </div>
           </div>
         </div>

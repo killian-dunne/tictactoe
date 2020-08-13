@@ -1,7 +1,9 @@
 html, body {
   font-family: 'Varela Round', sans-serif;
   margin: 0px;
+  overflow: auto;
   height: 100%;
+  color: #333333;
 }
 
 .modal {
@@ -14,6 +16,9 @@ html, body {
   background-color: rgba(0,0,0,0.4);
 }
 
+h1 {
+  color: #333333;
+}
 .game-setup {
   margin: auto;
   padding: 20px;
@@ -47,6 +52,8 @@ html, body {
   margin: 20px;
   padding: 10px;
   border-radius: 5px;
+  cursor: pointer;
+  color: #333333;
 }
 
 .hide {
@@ -56,7 +63,7 @@ html, body {
 .topright-x {
   float: right;
   font-size: 28px;
-  color: gray;
+  color: #333333;
   position: absolute;
   top: 0px;
   right: 10px;
@@ -91,10 +98,12 @@ html, body {
 
 .info-button {
   align-self: center;
-  border-radius: 2px;
+  border-radius: 5px;
   padding: 2px;
   font-size: 20px;
   margin-bottom: 15px;
+  cursor: pointer;
+  color: #333333;
 }
 
 .square:focus {
@@ -110,6 +119,7 @@ html, body {
   flex-direction: column;
   background-color: #99ccff;
   height: 100%;
+  overflow: auto;
 }
 
 #root {
@@ -162,6 +172,8 @@ html, body {
 
   .background-box {
     flex-direction: column;
+    margin-bottom: 18.75px;
+    min-height: 450px;
   }
 
   .vl {
@@ -206,6 +218,9 @@ html, body {
     margin: 0px;
     margin-top: 10px;
     margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    color: #333333;
   }
 
   .pad-left {
